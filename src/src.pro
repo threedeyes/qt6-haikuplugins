@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = platform style imageformats
+SUBDIRS = platform style imageformats preferences
