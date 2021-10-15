@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2018 The Qt Company Ltd.
-** Copyright (C) 2015-2018 Gerasim Troeglazov,
+** Copyright (C) 2015-2021 Gerasim Troeglazov,
 ** Contact: 3dEyes@gmail.com
 **
 ** This file is part of the plugins of the Qt Toolkit.
@@ -42,6 +42,6 @@
 
 #include <QSettings>
 
-#define QT_SETTINGS_FILENAME "/boot/home/config/settings/qt-plugins"
+#define QT_SETTINGS_FILENAME "/boot/home/config/settings/qt6-plugins"
 
 #endif
