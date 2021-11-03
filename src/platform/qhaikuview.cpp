@@ -49,6 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 
+Q_DECLARE_METATYPE(QMimeData*)
 Q_DECLARE_METATYPE(QEvent::Type)
 Q_DECLARE_METATYPE(Qt::DropActions)
 Q_DECLARE_METATYPE(Qt::MouseButton)
@@ -63,6 +64,7 @@ QHaikuSurfaceView::QHaikuSurfaceView(BRect rect)
 	lastMouseState(Qt::NoButton),
 	lastMouseButton(Qt::NoButton)
 {
+    qRegisterMetaType<QMimeData*>();
     qRegisterMetaType<QEvent::Type>();
 	qRegisterMetaType<Qt::DropActions>();
     qRegisterMetaType<Qt::MouseButton>();

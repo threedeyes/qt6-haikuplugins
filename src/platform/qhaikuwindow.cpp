@@ -309,6 +309,8 @@ QHaikuWindow::QHaikuWindow(QWindow *wnd)
     , m_visible(false)
     , m_pendingGeometryChangeOnShow(true)
 {
+	qRegisterMetaType<QMimeData*>();
+
 	connect(m_window, SIGNAL(quitRequested()), SLOT(platformWindowQuitRequested()));
     connect(m_window, SIGNAL(windowMoved(QPoint)), SLOT(platformWindowMoved(QPoint)));
 	connect(m_window, SIGNAL(windowResized(QSize)), SLOT(platformWindowResized(QSize)));
