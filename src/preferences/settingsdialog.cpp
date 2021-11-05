@@ -29,6 +29,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         }
     }
 
+	ui->nativeDialogsGroup->setHidden(true);
+	ui->OpenGlGroup->setHidden(true);
+
     readSettings();
 }
 
