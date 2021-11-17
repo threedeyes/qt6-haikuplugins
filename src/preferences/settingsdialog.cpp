@@ -25,7 +25,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         QString themeFile = iconsDir.absolutePath() +"/" + iconSets[n] + "/index.theme";
         bool isTheme = QFile::exists(themeFile);
         if (isTheme) {
-            ui->iconSetComboBox->addItem( iconSets[n], iconSets[n] );
+            ui->iconSetComboBox->addItem(iconSets[n], QVariant(iconSets[n]));
         }
     }
 
@@ -54,8 +54,8 @@ void SettingsDialog::writeSettings()
     settings.setValue("hide_from_deskbar", ui->deskBarCheckBox->isChecked());
     settings.endGroup();
     settings.beginGroup("Style");
-    settings.setValue("widget_style", ui->styleComboBox->currentText());
-    settings.setValue("icons_iconset", ui->iconSetComboBox->currentText());
+    settings.setValue("widget_style", QVariant(ui->styleComboBox->currentText()));
+    settings.setValue("icons_iconset", QVariant(ui->iconSetComboBox->currentText()));
     settings.setValue("icons_small_size", ui->smallIconSizeSpinBox->value());
     settings.setValue("icons_large_size", ui->largeIconSizeSpinBox->value());
     settings.setValue("icons_toolbar_icon_size", ui->toolbarIconSizeSpinBox->value());
@@ -65,24 +65,24 @@ void SettingsDialog::writeSettings()
     settings.beginGroup("Network");
     settings.setValue("use_proxy", ui->proxyGroupBox->isChecked());
     settings.setValue("http_proxy_enable", ui->httpProxyEnable->isChecked());
-    settings.setValue("http_proxy_scheme", ui->httpProxyScheme->currentText());
-    settings.setValue("http_proxy_address", ui->httpProxyAddress->text());
+    settings.setValue("http_proxy_scheme", QVariant(ui->httpProxyScheme->currentText()));
+    settings.setValue("http_proxy_address", QVariant(ui->httpProxyAddress->text()));
     settings.setValue("http_proxy_port", ui->httpProxyPort->value());
-    settings.setValue("http_proxy_username", ui->httpProxyUser->text());
-    settings.setValue("http_proxy_password", crypt->encryptToString(ui->httpProxyPassword->text()));
-    settings.setValue("https_proxy_enable", ui->httpsProxyEnable->isChecked());
-    settings.setValue("https_proxy_scheme", ui->httpsProxyScheme->currentText());
-    settings.setValue("https_proxy_address", ui->httpsProxyAddress->text());
-    settings.setValue("https_proxy_port", ui->httpsProxyPort->value());
-    settings.setValue("https_proxy_username", ui->httpsProxyUser->text());
-    settings.setValue("https_proxy_password", crypt->encryptToString(ui->httpsProxyPassword->text()));
-    settings.setValue("ftp_proxy_enable", ui->ftpProxyEnable->isChecked());
-    settings.setValue("ftp_proxy_scheme", ui->ftpProxyScheme->currentText());
-    settings.setValue("ftp_proxy_address", ui->ftpProxyAddress->text());
+    settings.setValue("http_proxy_username", QVariant(ui->httpProxyUser->text()));
+    settings.setValue("http_proxy_password", QVariant(crypt->encryptToString(ui->httpProxyPassword->text())));
+    settings.setValue("https_proxy_enable", QVariant(ui->httpsProxyEnable->isChecked()));
+    settings.setValue("https_proxy_scheme", QVariant(ui->httpsProxyScheme->currentText()));
+    settings.setValue("https_proxy_address", QVariant(ui->httpsProxyAddress->text()));
+    settings.setValue("https_proxy_port", QVariant(ui->httpsProxyPort->value()));
+    settings.setValue("https_proxy_username", QVariant(ui->httpsProxyUser->text()));
+    settings.setValue("https_proxy_password", QVariant(crypt->encryptToString(ui->httpsProxyPassword->text())));
+    settings.setValue("ftp_proxy_enable", QVariant(ui->ftpProxyEnable->isChecked()));
+    settings.setValue("ftp_proxy_scheme", QVariant(ui->ftpProxyScheme->currentText()));
+    settings.setValue("ftp_proxy_address", QVariant(ui->ftpProxyAddress->text()));
     settings.setValue("ftp_proxy_port", ui->ftpProxyPort->value());
-    settings.setValue("ftp_proxy_username", ui->ftpProxyUser->text());
-    settings.setValue("ftp_proxy_password", crypt->encryptToString(ui->ftpProxyPassword->text()));
-    settings.setValue("no_proxy_list", ui->noProxyList->toPlainText());
+    settings.setValue("ftp_proxy_username", QVariant(ui->ftpProxyUser->text()));
+    settings.setValue("ftp_proxy_password", QVariant(crypt->encryptToString(ui->ftpProxyPassword->text())));
+    settings.setValue("no_proxy_list", QVariant(ui->noProxyList->toPlainText()));
     settings.endGroup();
 }
 
@@ -108,27 +108,27 @@ void SettingsDialog::readSettings()
     ui->menuIconCheckBox->setChecked(settings.value("icons_menu_icons", true).toBool());
     settings.endGroup();
     settings.beginGroup("Network");
-    QString emptyString = crypt->encryptToString(QString(""));
+    QVariant emptyString = crypt->encryptToString(QString(""));
     ui->proxyGroupBox->setChecked(settings.value("use_proxy", false).toBool());
     ui->httpProxyEnable->setChecked(settings.value("http_proxy_enable", false).toBool());
-    ui->httpProxyScheme->setCurrentText(settings.value("http_proxy_scheme", QString("http://")).toString());
-    ui->httpProxyAddress->setText(settings.value("http_proxy_address", QString("")).toString());
+    ui->httpProxyScheme->setCurrentText(settings.value("http_proxy_scheme", QVariant("http://")).toString());
+    ui->httpProxyAddress->setText(settings.value("http_proxy_address", QVariant("")).toString());
     ui->httpProxyPort->setValue(settings.value("http_proxy_port", 8080).toInt());
-    ui->httpProxyUser->setText(settings.value("http_proxy_username", QString("")).toString());
+    ui->httpProxyUser->setText(settings.value("http_proxy_username", QVariant("")).toString());
     ui->httpProxyPassword->setText(crypt->decryptToString(settings.value("http_proxy_password", emptyString).toString()));
     ui->httpsProxyEnable->setChecked(settings.value("https_proxy_enable", false).toBool());
-    ui->httpsProxyScheme->setCurrentText(settings.value("https_proxy_scheme", QString("http://")).toString());
-    ui->httpsProxyAddress->setText(settings.value("https_proxy_address", QString("")).toString());
+    ui->httpsProxyScheme->setCurrentText(settings.value("https_proxy_scheme", QVariant("http://")).toString());
+    ui->httpsProxyAddress->setText(settings.value("https_proxy_address", QVariant("")).toString());
     ui->httpsProxyPort->setValue(settings.value("https_proxy_port", 8080).toInt());
-    ui->httpsProxyUser->setText(settings.value("https_proxy_username", QString("")).toString());
+    ui->httpsProxyUser->setText(settings.value("https_proxy_username", QVariant("")).toString());
     ui->httpsProxyPassword->setText(crypt->decryptToString(settings.value("https_proxy_password", emptyString).toString()));
     ui->ftpProxyEnable->setChecked(settings.value("ftp_proxy_enable", false).toBool());
-    ui->ftpProxyScheme->setCurrentText(settings.value("ftp_proxy_scheme", QString("http://")).toString());
-    ui->ftpProxyAddress->setText(settings.value("ftp_proxy_address", QString("")).toString());
+    ui->ftpProxyScheme->setCurrentText(settings.value("ftp_proxy_scheme", QVariant("http://")).toString());
+    ui->ftpProxyAddress->setText(settings.value("ftp_proxy_address", QVariant("")).toString());
     ui->ftpProxyPort->setValue(settings.value("ftp_proxy_port", 8080).toInt());
-    ui->ftpProxyUser->setText(settings.value("ftp_proxy_username", QString("")).toString());
+    ui->ftpProxyUser->setText(settings.value("ftp_proxy_username", QVariant("")).toString());
     ui->ftpProxyPassword->setText(crypt->decryptToString(settings.value("ftp_proxy_password", emptyString).toString()));
-    ui->noProxyList->setPlainText(settings.value("no_proxy_list", QString("localhost,127.0.0.1")).toString());
+    ui->noProxyList->setPlainText(settings.value("no_proxy_list", QVariant("localhost,127.0.0.1")).toString());
     settings.endGroup();
  }
 
