@@ -3822,15 +3822,19 @@ QRect QHaikuStyle::subElementRect(SubElement sr, const QStyleOption *opt, const 
 			switch(twf->shape) {
 				case QTabBar::RoundedNorth:
 				case QTabBar::TriangularNorth:
+					r.adjust(5, 1, 5, 1);
+					break;
 				case QTabBar::RoundedSouth:
 				case QTabBar::TriangularSouth:
-					r.adjust(5, 0, 5, 0);
+					r.adjust(5, -1, 5, -1);
 					break;
 				case QTabBar::RoundedWest:
 				case QTabBar::TriangularWest:
+					r.adjust(1, 5, 1, 5);
+					break;
 				case QTabBar::RoundedEast:
 				case QTabBar::TriangularEast:
-					r.adjust(0, 5, 0, 5);
+					r.adjust(-1, 5, -1, 5);
 					break;
 			}
 		}
