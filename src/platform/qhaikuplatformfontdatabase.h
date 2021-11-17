@@ -58,15 +58,15 @@ public:
 class QHaikuPlatformFontDatabase: public QFreeTypeFontDatabase
 {
 public:
-	QString fontDir() const;
-	void populateFontDatabase();
-	QFont defaultFont() const Q_DECL_OVERRIDE;
+	QString fontDir() const override;
+	void populateFontDatabase() override;
+	QFont defaultFont() const override;
 	QStringList fallbacksForFamily(const QString &family,
 									QFont::Style style,
 									QFont::StyleHint styleHint,
-									QChar::Script script) const;
-	QFontEngine *fontEngine(const QFontDef &fontDef, void *handle) Q_DECL_OVERRIDE;
-	void releaseHandle(void *handle) Q_DECL_OVERRIDE;
+									QChar::Script script) const override;
+	QFontEngine *fontEngine(const QFontDef &fontDef, void *handle) override;
+	void releaseHandle(void *handle) override;
 private:
 	QHash<QChar::Script, QStringList> m_fallbacks;
 };

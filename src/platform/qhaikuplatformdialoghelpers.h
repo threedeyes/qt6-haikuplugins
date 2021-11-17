@@ -51,11 +51,11 @@ class QHaikuPlatformMessageDialogHelper: public QPlatformMessageDialogHelper
     Q_OBJECT
 public:
     QHaikuPlatformMessageDialogHelper();
-    void exec();
+    void exec() override;
     bool show(Qt::WindowFlags windowFlags,
                           Qt::WindowModality windowModality,
-                          QWindow *parent);
-    void hide();
+                          QWindow *parent) override;
+    void hide() override;
     
 private:
     int m_buttonId;

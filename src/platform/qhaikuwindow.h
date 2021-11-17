@@ -81,15 +81,15 @@ public:
 		const char *title, window_look look, window_feel feel, uint32 flags);
 	~QtHaikuWindow();
 
-	void FrameResized(float width, float height);
-	void FrameMoved(BPoint point);
-	void MessageReceived(BMessage* msg);
-	virtual void DispatchMessage(BMessage *, BHandler *);
-	virtual void WindowActivated(bool active);
-	virtual bool QuitRequested();
+	void FrameResized(float width, float height) override;
+	void FrameMoved(BPoint point) override;
+	void MessageReceived(BMessage* msg) override;
+	virtual void DispatchMessage(BMessage *, BHandler *) override;
+	virtual void WindowActivated(bool active) override;
+	virtual bool QuitRequested() override;
 
-	virtual void Zoom(BPoint origin, float w, float h);
-	virtual void Minimize(bool mimimize);
+	virtual void Zoom(BPoint origin, float w, float h) override;
+	virtual void Minimize(bool mimimize) override;
 
 	QHaikuSurfaceView *View(void);
 
@@ -135,15 +135,15 @@ public:
     bool startSystemResize(Qt::Edges edges) override;
     bool startSystemMove() override;
 
-	QMargins frameMargins() const { return m_margins; }
+	QMargins frameMargins() const override { return m_margins; }
 	QHaikuScreen *platformScreen() const;
 
-	void setVisible(bool visible);
-	void requestActivateWindow();
+	void setVisible(bool visible) override;
+	void requestActivateWindow() override;
 
 	bool setKeyboardGrabEnabled(bool) Q_DECL_OVERRIDE { return false; }
 	bool setMouseGrabEnabled(bool) Q_DECL_OVERRIDE { return false; }
-	void propagateSizeHints();
+	void propagateSizeHints() override;
 
 	WId winId() const override;
 
@@ -151,8 +151,8 @@ public:
 	static QHaikuSurfaceView *viewForWinId(WId id);
 	static void syncDeskBarVisible(void);
 
-	void raise();
-	void lower();
+	void raise() override;
+	void lower() override;
 
 	QtHaikuWindow *m_window;
 	QHaikuWindow *m_parent;

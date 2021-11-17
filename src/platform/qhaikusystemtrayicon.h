@@ -68,8 +68,8 @@ class QSystemTrayIconLooper : public QObject, public BLooper
 	Q_OBJECT
 public:
 	QSystemTrayIconLooper();
-	virtual void MessageReceived(BMessage* theMessage);
-	thread_id Run(void);
+	virtual void MessageReceived(BMessage* theMessage) override;
+	thread_id Run(void) override;
 signals:
 	void sendHaikuMessage(BMessage *);
 private:

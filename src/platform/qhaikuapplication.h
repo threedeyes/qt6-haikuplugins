@@ -83,10 +83,10 @@ public:
 	HQApplication(const char*signature);
 	~HQApplication();
 
-	virtual void MessageReceived(BMessage *message);
-	void	RefsReceived(BMessage *pmsg);
-	virtual bool QuitRequested();
-	virtual void ReadyToRun();
+	virtual void MessageReceived(BMessage *message) override;
+	void	RefsReceived(BMessage *pmsg) override;
+	virtual bool QuitRequested() override;
+	virtual void ReadyToRun() override;
 
 	QStringList openFiles(void) { return openFileList; }
 	uint32 QtFlags(void) { return qtFlags; }

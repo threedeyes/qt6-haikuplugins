@@ -49,7 +49,7 @@ class QHaikuExpIntegrationPlugin : public QPlatformIntegrationPlugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QPlatformIntegrationFactoryInterface_iid FILE "haiku.json")
 public:
-    QPlatformIntegration *create(const QString&, const QStringList&, int &, char **);
+    QPlatformIntegration *create(const QString&, const QStringList&, int &, char **) override;
 };
 
 QPlatformIntegration *QHaikuExpIntegrationPlugin::create(const QString& system, const QStringList& parameters, int &argc, char **argv)

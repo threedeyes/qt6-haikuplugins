@@ -69,14 +69,14 @@ public:
     QHaikuScreen();
     ~QHaikuScreen();
 
-    QRect geometry() const;
-    int depth() const { return 32; }
-    QImage::Format format() const { return QImage::Format_RGB32; }
-	QPlatformCursor *cursor() const;
+    QRect geometry() const override;
+    int depth() const override { return 32; }
+    QImage::Format format() const override { return QImage::Format_RGB32; }
+	QPlatformCursor *cursor() const override;
 	
-    QPixmap grabWindow(WId window, int x, int y, int width, int height) const;
+    QPixmap grabWindow(WId window, int x, int y, int width, int height) const override;
 
-    QPlatformScreen::SubpixelAntialiasingType subpixelAntialiasingTypeHint() const;
+    QPlatformScreen::SubpixelAntialiasingType subpixelAntialiasingTypeHint() const override;
 
     QSizeF physicalSize() const override;
     QDpi logicalDpi() const override;
@@ -93,7 +93,7 @@ class QHaikuDrag : public QPlatformDrag
 {
 public:
     QMimeData *platformDropData() { return 0; }
-    Qt::DropAction drag(QDrag *) { return Qt::IgnoreAction; }
+    Qt::DropAction drag(QDrag *) override { return Qt::IgnoreAction; }
 };
 //#endif
 
@@ -103,10 +103,10 @@ public:
     QHaikuBackingStore(QWindow *window);
     ~QHaikuBackingStore();
 
-    QPaintDevice *paintDevice();
-    void flush(QWindow *window, const QRegion &region, const QPoint &offset);
-    void resize(const QSize &size, const QRegion &staticContents);
-    bool scroll(const QRegion &area, int dx, int dy);
+    QPaintDevice *paintDevice() override;
+    void flush(QWindow *window, const QRegion &region, const QPoint &offset) override;
+    void resize(const QSize &size, const QRegion &staticContents) override;
+    bool scroll(const QRegion &area, int dx, int dy) override;
 
     QPixmap grabWindow(WId window, const QRect &rect) const;
 

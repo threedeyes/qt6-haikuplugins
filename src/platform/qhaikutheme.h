@@ -62,20 +62,20 @@ public:
 
     static QString name() { return QStringLiteral("haiku"); }
 
-    bool usePlatformNativeDialog(DialogType type) const;
-    QPlatformDialogHelper *createPlatformDialogHelper(DialogType type) const;
+    bool usePlatformNativeDialog(DialogType type) const override;
+    QPlatformDialogHelper *createPlatformDialogHelper(DialogType type) const override;
     
-    virtual QVariant themeHint(ThemeHint hint) const;
+    virtual QVariant themeHint(ThemeHint hint) const override;
 
-    const QFont *font(Font type = SystemFont) const;
+    const QFont *font(Font type = SystemFont) const override;
 
-    const QPalette *palette(Palette type = SystemPalette) const;
+    const QPalette *palette(Palette type = SystemPalette) const override;
 
-    virtual QPixmap standardPixmap(StandardPixmap sp, const QSizeF &size) const;
-    virtual QIcon fileIcon(const QFileInfo &fileInfo, QPlatformTheme::IconOptions iconOptions = {}) const;
+    virtual QPixmap standardPixmap(StandardPixmap sp, const QSizeF &size) const override;
+    virtual QIcon fileIcon(const QFileInfo &fileInfo, QPlatformTheme::IconOptions iconOptions = {}) const override;
 
 #ifndef QT_NO_SYSTEMTRAYICON
-    QPlatformSystemTrayIcon *createPlatformSystemTrayIcon() const;
+    QPlatformSystemTrayIcon *createPlatformSystemTrayIcon() const override;
 #endif
 
 private:

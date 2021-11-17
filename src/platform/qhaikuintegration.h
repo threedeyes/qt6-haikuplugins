@@ -92,27 +92,27 @@ public:
     QHaikuIntegration(const QStringList &parameters, int &argc, char **argv);
     ~QHaikuIntegration();
 
-    bool hasCapability(QPlatformIntegration::Capability cap) const;
+    bool hasCapability(QPlatformIntegration::Capability cap) const override;
 
-    QPlatformWindow *createPlatformWindow(QWindow *window) const;
-    QPlatformBackingStore *createPlatformBackingStore(QWindow *window) const;
+    QPlatformWindow *createPlatformWindow(QWindow *window) const override;
+    QPlatformBackingStore *createPlatformBackingStore(QWindow *window) const override;
 #if !defined(QT_NO_OPENGL)    
-    QPlatformOpenGLContext *createPlatformOpenGLContext(QOpenGLContext *context) const;
+    QPlatformOpenGLContext *createPlatformOpenGLContext(QOpenGLContext *context) const override;
 #endif    
     
-    QPlatformClipboard *clipboard() const;
+    QPlatformClipboard *clipboard() const override;
 
-    QPlatformDrag *drag() const;
-    QPlatformServices *services() const;
+    QPlatformDrag *drag() const override;
+    QPlatformServices *services() const override;
     QHaikuScreen *screen() { return m_screen; }
 
-    QPlatformFontDatabase *fontDatabase() const;
-    QAbstractEventDispatcher *createEventDispatcher() const;
+    QPlatformFontDatabase *fontDatabase() const override;
+    QAbstractEventDispatcher *createEventDispatcher() const override;
 
     static QHaikuIntegration *createHaikuIntegration(const QStringList& parameters, int &argc, char **argv);
 
-    QStringList themeNames() const;
-    QPlatformTheme *createPlatformTheme(const QString &name) const; 
+    QStringList themeNames() const override;
+    QPlatformTheme *createPlatformTheme(const QString &name) const override;
 
 private:
     static int32 haikuApplicationThread(void *data);

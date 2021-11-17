@@ -62,10 +62,10 @@ class QHaikuSurfaceView : public QObject, public BView
 		QHaikuSurfaceView(BRect rect);
 		~QHaikuSurfaceView() {};
 		
-		virtual void Draw(BRect rect);
-		virtual void MouseDown(BPoint p);
-		virtual void MouseUp(BPoint p);
-		virtual void MouseMoved(BPoint point, uint32 transit, const BMessage *msg);
+		virtual void Draw(BRect rect) override;
+		virtual void MouseDown(BPoint p) override;
+		virtual void MouseUp(BPoint p) override;
+		virtual void MouseMoved(BPoint point, uint32 transit, const BMessage *msg) override;
 
 		Qt::MouseButton hostToQtButton(uint32 buttons) const;
 		Qt::MouseButtons hostToQtButtons(uint32 buttons) const;
