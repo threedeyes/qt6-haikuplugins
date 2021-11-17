@@ -2077,57 +2077,57 @@ void QHaikuStyle::drawControl(ControlElement element, const QStyleOption *option
             		case QTabBar::RoundedNorth:
 						bRect1.bottom++;
             			side = BControlLook::B_TOP_BORDER;
-            			borders = (lastTab?BControlLook::B_RIGHT_BORDER:0) |
-            					  (previousSelected?0:BControlLook::B_LEFT_BORDER) |
+            			borders = (lastTab ? BControlLook::B_RIGHT_BORDER : 0) |
+            					  (previousSelected ? 0 : BControlLook::B_LEFT_BORDER) |
             					  BControlLook::B_TOP_BORDER |
             					  BControlLook::B_BOTTOM_BORDER;
             			if (lastTab || selected)
             				bRect1.right++;
-            			if(!previousSelected || selected)
+            			if (!previousSelected || selected)
             				bRect1.left--;
     	            	break;
 	                case QTabBar::TriangularSouth:
                 	case QTabBar::RoundedSouth:
 						bRect1.top--;
                 		side = BControlLook::B_BOTTOM_BORDER;
-            			borders = (lastTab?BControlLook::B_RIGHT_BORDER:0) |
-            					  (previousSelected?0:BControlLook::B_LEFT_BORDER) |
+            			borders = (lastTab ? BControlLook::B_RIGHT_BORDER : 0) |
+            					  (previousSelected ? 0 : BControlLook::B_LEFT_BORDER) |
             					  BControlLook::B_TOP_BORDER |
             					  BControlLook::B_BOTTOM_BORDER;
             			if (lastTab || selected)
             				bRect1.right++;
-            			if(!previousSelected || selected)
+            			if (!previousSelected || selected)
             				bRect1.left--;
 						break;
  					case QTabBar::TriangularWest:
                 	case QTabBar::RoundedWest:
 						bRect1.right++;
                 		side = BControlLook::B_LEFT_BORDER;                		
-            			borders = (lastTab?BControlLook::B_BOTTOM_BORDER:0) |
-            					  (previousSelected?0:BControlLook::B_TOP_BORDER) |
+            			borders = (lastTab ? BControlLook::B_BOTTOM_BORDER : 0) |
+            					  (previousSelected ? 0 : BControlLook::B_TOP_BORDER) |
             					  BControlLook::B_LEFT_BORDER |
             					  BControlLook::B_RIGHT_BORDER;
             			if (lastTab || selected)
             				bRect1.bottom++;
-            			if(!previousSelected || selected)
+            			if (!previousSelected || selected)
             				bRect1.top--;
 	                	break;
     	            case QTabBar::TriangularEast:
 	                case QTabBar::RoundedEast:
 						bRect1.left--;
 	                	side = BControlLook::B_RIGHT_BORDER;
-            			borders = (lastTab?BControlLook::B_BOTTOM_BORDER:0) |
-            					  (previousSelected?0:BControlLook::B_TOP_BORDER) |
+            			borders = (lastTab ? BControlLook::B_BOTTOM_BORDER : 0) |
+            					  (previousSelected ? 0 : BControlLook::B_TOP_BORDER) |
             					  BControlLook::B_LEFT_BORDER |
             					  BControlLook::B_RIGHT_BORDER;
             			if (lastTab || selected)
             				bRect1.bottom++;
-            			if(!previousSelected || selected)
+            			if (!previousSelected || selected)
 							bRect1.top--;
 						break;
 				}
 
-				if(selected)
+				if (selected)
 					be_control_look->DrawActiveTab(surface.view(), bRect1, bRect, base, flags, BControlLook::B_ALL_BORDERS, side);
 				else
 					be_control_look->DrawInactiveTab(surface.view(), bRect1, bRect, base, flags, borders, side);
