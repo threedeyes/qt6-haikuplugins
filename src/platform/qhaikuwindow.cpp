@@ -342,6 +342,11 @@ QHaikuWindow::QHaikuWindow(QWindow *wnd)
     QWindowSystemInterface::flushWindowSystemEvents();
 }
 
+QHaikuWindow::~QHaikuWindow()
+{
+	if (m_window)
+		destroy();
+}
 
 void QHaikuWindow::destroy()
 {
