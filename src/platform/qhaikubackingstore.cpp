@@ -201,11 +201,10 @@ QHaikuBackingStore *QHaikuBackingStore::backingStoreForWinId(WId id)
 
 void QHaikuBackingStore::clearHash()
 {
-    QList<WId> ids = m_windowAreaHash.keys();
-    foreach (WId id, ids) {
-        QHash<WId, QHaikuBackingStore *>::iterator it = m_backingStoreForWinIdHash.find(id);
-        if (it.value() == this)
-            m_backingStoreForWinIdHash.remove(id);
+    for (auto it = m_windowAreaHash.cbegin(), end = m_windowAreaHash.cend(); it != end; ++it) {
+        const auto it2 = qAsConst(m_backingStoreForWinIdHash).find(it.key());
+        if (it2.value() == this)
+            m_backingStoreForWinIdHash.erase(it2);
     }
     m_windowAreaHash.clear();
 }
