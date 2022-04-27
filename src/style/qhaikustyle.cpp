@@ -3792,7 +3792,7 @@ int QHaikuStyle::styleHint(StyleHint hint, const QStyleOption *option, const QWi
         ret = false;
         break;
     case SH_Menu_SubMenuPopupDelay:
-        ret = 225;
+        ret = 50;
         break;
 	case SH_ScrollBar_Transient:
 		ret = false;
