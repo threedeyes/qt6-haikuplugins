@@ -1,8 +1,7 @@
-/****************************************************************************
+/***************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
-** Copyright (C) 2015-2020 Gerasim Troeglazov,
-** Contact: 3dEyes@gmail.com
+** Copyright (C) 2021 Research In Motion
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the plugins of the Qt Toolkit.
 **
@@ -38,69 +37,31 @@
 **
 ****************************************************************************/
 
-#ifndef QHAIKU_APPLICATION_H
-#define QHAIKU_APPLICATION_H
+#ifndef QHAIKUNATIVEINTERFACE_H
+#define QHAIKUNATIVEINTERFACE_H
 
-#include "qhaikuintegration.h"
-#include "qhaikusettings.h"
-#include "qhaikuclipboard.h"
+#include <qpa/qplatformnativeinterface.h>
 
-#include "simplecrypt.h"
+QT_BEGIN_NAMESPACE
 
-#include <QApplication>
-#include <QProcess>
-#include <QSettings>
-#include <QString>
-#include <QStringList>
-#include <QClipboard>
-#include <QEvent>
-#include <QDebug>
+class QHaikuIntegration;
 
-#include <private/qguiapplication_p.h>
-
-#include <OS.h>
-#include <Application.h>
-#include <AppFileInfo.h>
-#include <File.h>
-#include <Path.h>
-#include <Entry.h>
-#include <String.h>
-#include <Locale.h>
-#include <LocaleRoster.h>
-#include <Roster.h>
-#include <Clipboard.h>
-#include <Resources.h>
-
-#include <stdio.h>
-
-#define Q_REF_TO_ARGV 	0x01
-#define Q_REF_TO_FORK 	0x02
-#define Q_KILL_ON_EXIT	0x04
-
-class HQApplication : public QObject, public BApplication
+class QHaikuNativeInterface : public QPlatformNativeInterface
 {
-	Q_OBJECT
 public:
-	HQApplication(const char*signature);
-	~HQApplication();
+    QHaikuNativeInterface(QHaikuIntegration *integration);
+    void *nativeResourceForWindow(const QByteArray &resource, QWindow *window) override;
+    void *nativeResourceForScreen(const QByteArray &resource, QScreen *screen) override;
+    void *nativeResourceForIntegration(const QByteArray &resource) override;
+    void *nativeResourceForContext(const QByteArray &resource, QOpenGLContext *context) override;
 
-	virtual void MessageReceived(BMessage *message) override;
-	void	RefsReceived(BMessage *pmsg) override;
-	virtual bool QuitRequested() override;
-	virtual void ReadyToRun() override;
+    void setWindowProperty(QPlatformWindow *window, const QString &name, const QVariant &value) override;
+    NativeResourceForIntegrationFunction nativeResourceFunctionForIntegration(const QByteArray &resource) override;
 
-	QStringList openFiles(void) { return openFileList; }
-	uint32 QtFlags(void) { return qtFlags; }
-	void SetQtFlags(uint32 flags) { qtFlags = flags; }
-	void waitForRun(void);
 private:
-	BMessenger  fTrackerMessenger;
-	QHaikuClipboard *fClipboard;
-	QStringList openFileList;
-	sem_id readyForRunSem;
-	uint32 qtFlags;
-Q_SIGNALS:
-	bool applicationQuit();
+    QHaikuIntegration *m_integration;
 };
 
-#endif
+QT_END_NAMESPACE
+
+#endif // QHAIKUNATIVEINTERFACE_H

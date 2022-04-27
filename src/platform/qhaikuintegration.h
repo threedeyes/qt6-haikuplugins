@@ -45,15 +45,17 @@
 #include <qpa/qplatformopenglcontext.h>
 #include <qscopedpointer.h>
 
-//OpenGL support disabled for now
-//#define QT_NO_OPENGL
-
+#include "qhaikuapplication.h"
+#include "qhaikuwindow.h"
+#include "qhaikubackingstore.h"
+#include "qhaikuglcontext.h"
+#include "qhaikuscreen.h"
+#include "qhaikutheme.h"
 #include "qhaikuclipboard.h"
-#include "qhaikucommon.h"
-
-#if !defined(QT_NO_OPENGL)
-#include <GLView.h>
-#endif
+#include "qhaikuservices.h"
+#include "qhaikuplatformfontdatabase.h"
+#include "qhaikusystemlocale.h"
+#include "qhaikunativeinterface.h"
 
 extern status_t get_subpixel_antialiasing(bool* subpix);
 extern status_t get_hinting_mode(uint8* hinting);
@@ -63,27 +65,6 @@ QT_BEGIN_NAMESPACE
 class QSimpleDrag;
 class QHaikuBackendData;
 class QHaikuSystemLocale;
-
-#if !defined(QT_NO_OPENGL)
-class QHaikuGLContext : public QPlatformOpenGLContext
-{
-public:
-    QHaikuGLContext(QOpenGLContext *context);
-    ~QHaikuGLContext();
-
-    bool makeCurrent(QPlatformSurface *surface) override;
-    void doneCurrent() override;
-    void swapBuffers(QPlatformSurface *surface) override;
-    QFunctionPointer getProcAddress(const char *procName) override;
-
-    QSurfaceFormat format() const override;
-    bool isSharing() const override;
-    bool isValid() const override;
-private:
-	QSurfaceFormat d_format;
-	BGLView *glview;
-};
-#endif
 
 class QHaikuIntegration : public QObject, public QPlatformIntegration
 {
@@ -96,9 +77,7 @@ public:
 
     QPlatformWindow *createPlatformWindow(QWindow *window) const override;
     QPlatformBackingStore *createPlatformBackingStore(QWindow *window) const override;
-#if !defined(QT_NO_OPENGL)    
     QPlatformOpenGLContext *createPlatformOpenGLContext(QOpenGLContext *context) const override;
-#endif    
     
     QPlatformClipboard *clipboard() const override;
 
@@ -108,6 +87,8 @@ public:
 
     QPlatformFontDatabase *fontDatabase() const override;
     QAbstractEventDispatcher *createEventDispatcher() const override;
+
+    QPlatformNativeInterface *nativeInterface() const override { return m_nativeInterface; }
 
     static QHaikuIntegration *createHaikuIntegration(const QStringList& parameters, int &argc, char **argv);
 
@@ -119,6 +100,7 @@ private:
     static bool isOpenGLEnabled();
 
     QPlatformFontDatabase *m_fontDatabase;
+    QHaikuNativeInterface *m_nativeInterface;
     QSimpleDrag *m_drag;
     QPlatformServices *m_services;
     QHaikuSystemLocale *m_haikuSystemLocale;

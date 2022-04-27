@@ -44,6 +44,9 @@
 #include <qpa/qplatformbackingstore.h>
 #include <qpa/qplatformwindow.h>
 
+#include <QList>
+
+#include <Application.h>
 #include <Window.h>
 #include <Rect.h>
 #include <View.h>
@@ -54,13 +57,10 @@
 #include <Deskbar.h>
 #include <Roster.h>
 
-#if !defined(QT_NO_OPENGL)
-#include <GLView.h>
-#endif
-
 #include <qhash.h>
 
-#include "qhaikucommon.h"
+#include "qhaikubackingstore.h"
+#include "qhaikuscreen.h"
 #include "qhaikuview.h"
 
 #define kQuitApplication	'QAPP'
@@ -94,9 +94,6 @@ public:
 	QHaikuSurfaceView *View(void);
 
 	QHaikuSurfaceView *fView;
-#if !defined(QT_NO_OPENGL)
-	BGLView *fGLView;
-#endif
 	QHaikuWindow *fQWindow;
 Q_SIGNALS:
     void windowMoved(const QPoint &pos);
@@ -147,6 +144,8 @@ public:
 
 	WId winId() const override;
 
+	QHaikuWindow *topLevelWindow() { return m_topLevel; }
+
 	static QHaikuWindow *windowForWinId(WId id);
 	static QHaikuSurfaceView *viewForWinId(WId id);
 	static void syncDeskBarVisible(void);
@@ -154,8 +153,15 @@ public:
 	void raise() override;
 	void lower() override;
 
-	QtHaikuWindow *m_window;
-	QHaikuWindow *m_parent;
+	bool makeCurrent();
+	void swapBuffers();
+	BBitmap *openGLBitmap() { return m_openGLBufferBitmap; }
+	void *openGLBuffer() {
+		return m_openGLRenderBitmap != NULL ? m_openGLRenderBitmap->Bits() : NULL;
+	}
+	QList<QHaikuWindow*> *fakeChildList() { return &m_fakeChildWindow; }
+	BRegion getClippingRegion();
+
 private:
 	void setFrameMarginsEnabled(bool enabled);
 	void setGeometryImpl(const QRect &rect);
@@ -175,6 +181,14 @@ private:
 	bool m_positionIncludesFrame;
 	bool m_visible;
 	bool m_pendingGeometryChangeOnShow;
+
+	QtHaikuWindow *m_window;
+	QHaikuWindow *m_parent;
+	QHaikuWindow *m_topLevel;
+	QList<QHaikuWindow*> m_fakeChildWindow;
+
+	BBitmap *m_openGLBufferBitmap;
+	BBitmap *m_openGLRenderBitmap;
 private Q_SLOTS:
 	void platformWindowQuitRequested();
 	void platformWindowMoved(const QPoint &pos);

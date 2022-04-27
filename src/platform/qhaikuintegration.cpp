@@ -53,18 +53,6 @@
 #include <qpa/qplatformopenglcontext.h>
 
 #include "qhaikuintegration.h"
-#include "qhaikuapplication.h"
-#include "qhaikuwindow.h"
-#include "qhaikucommon.h"
-#include "qhaikutheme.h"
-#include "qhaikuclipboard.h"
-#include "qhaikuservices.h"
-#include "qhaikuplatformfontdatabase.h"
-#include "qhaikusystemlocale.h"
-
-#if !defined(QT_NO_OPENGL)
-#include <GLView.h>
-#endif
 
 QT_BEGIN_INCLUDE_NAMESPACE
 extern char **environ;
@@ -81,6 +69,7 @@ QHaikuIntegration::QHaikuIntegration(const QStringList &parameters, int &argc, c
 	m_screen = new QHaikuScreen();
 	QWindowSystemInterface::handleScreenAdded(m_screen);
     m_fontDatabase = new QHaikuPlatformFontDatabase();
+    m_nativeInterface = new QHaikuNativeInterface(this);
 	m_services = new QHaikuServices();
 	m_clipboard = new QHaikuClipboard();
 	m_haikuSystemLocale = new QHaikuSystemLocale;
@@ -90,6 +79,7 @@ QHaikuIntegration::QHaikuIntegration(const QStringList &parameters, int &argc, c
 
 QHaikuIntegration::~QHaikuIntegration()
 {
+	delete m_nativeInterface;
 	delete m_fontDatabase;
 	delete m_haikuSystemLocale;
 	delete m_clipboard;
@@ -105,17 +95,7 @@ QHaikuIntegration::~QHaikuIntegration()
 
 bool QHaikuIntegration::isOpenGLEnabled()
 {
-#ifdef __x86_64
-	app_info appInfo;
-	if (be_app->GetAppInfo(&appInfo) == B_OK) {
-		QStringList whiteListApps;
-		whiteListApps 	<< "application/x-vnd.otter-browser" \
-					<< "application/x-vnd.dooble" \
-					<< "application/x-vnd.qutebrowser";
-		return whiteListApps.contains(appInfo.signature, Qt::CaseInsensitive);
-	}
-#endif
-	return false;
+	return true;
 }
 
 QHaikuIntegration *QHaikuIntegration::createHaikuIntegration(const QStringList& parameters, int &argc, char **argv)
@@ -143,8 +123,8 @@ QHaikuIntegration *QHaikuIntegration::createHaikuIntegration(const QStringList& 
 	if (signature[0] != '\0')
 		appSignature = QLatin1String(signature);
 	else
-		appSignature = QLatin1String("application/x-vnd.qt5-") +
-			QCoreApplication::applicationName().remove("_x86");
+		appSignature = QLatin1String("application/x-vnd.qt6-") +
+			QCoreApplication::applicationName().replace(' ', '_').remove("_x86");
 
 	// Inject system environment (hack for QuickLaunch)
 	QProcess proc;
@@ -223,7 +203,7 @@ QHaikuIntegration *QHaikuIntegration::createHaikuIntegration(const QStringList& 
 	}
 
 	// Enable software rendering for QML
-	if (settings.value("qml_softwarecontext", true).toBool())
+	if (settings.value("qml_software_render", false).toBool())
 		setenv("QMLSCENE_DEVICE", "softwarecontext", 0);
 	settings.endGroup();
 
@@ -274,6 +254,10 @@ QHaikuIntegration *QHaikuIntegration::createHaikuIntegration(const QStringList& 
 		}
 	}
 	settings.endGroup();
+
+	// Override OpenGL/GLSL versions
+	setenv("MESA_GL_VERSION_OVERRIDE","2.1", 0);
+	setenv("MESA_GLSL_VERSION_OVERRIDE","460", 0);
 
     QHaikuIntegration *newHaikuIntegration = new QHaikuIntegration(parameters, argc, argv);
     connect(haikuApplication, SIGNAL(applicationQuit()), newHaikuIntegration, SLOT(platformAppQuit()), Qt::BlockingQueuedConnection);
@@ -336,14 +320,12 @@ QPlatformBackingStore *QHaikuIntegration::createPlatformBackingStore(QWindow *wi
     return new QHaikuBackingStore(window);
 }
 
-#if !defined(QT_NO_OPENGL)
 QPlatformOpenGLContext *QHaikuIntegration::createPlatformOpenGLContext(QOpenGLContext *context) const
 {
 	if (m_openGlEnabled)
 		return new QHaikuGLContext(context);
 	return nullptr;
 }
-#endif
 
 QAbstractEventDispatcher *QHaikuIntegration::createEventDispatcher() const
 {
@@ -369,83 +351,5 @@ QPlatformServices *QHaikuIntegration::services() const
 {
     return m_services;
 }
-
-#if !defined(QT_NO_OPENGL)
-QHaikuGLContext::QHaikuGLContext(QOpenGLContext *context)
-	: QPlatformOpenGLContext()  
-{
-	d_format = context->format();
-
-	if (d_format.renderableType() == QSurfaceFormat::DefaultRenderableType)
-		d_format.setRenderableType(QSurfaceFormat::OpenGL);
-
-	if (d_format.renderableType() != QSurfaceFormat::OpenGL)
-		return;
-
-	glview = new BGLView(BRect(0, 0, 1, 1), "bglview",
-		B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS, BGL_RGB | BGL_DOUBLE | BGL_DEPTH);
-}
-
-QHaikuGLContext::~QHaikuGLContext()
-{
-}
-
-QFunctionPointer QHaikuGLContext::getProcAddress(const char *procName)
-{
-	void *ptr = glview->GetGLProcAddress(procName);
-	return (QFunctionPointer)ptr;
-}
-
-
-bool QHaikuGLContext::makeCurrent(QPlatformSurface *surface)
-{
-	QSize size = surface->surface()->size();
-	QHaikuWindow *window = static_cast<QHaikuWindow *>(surface);
-
-	if (!window)
-		return false;
-
-	if (window->m_window->fGLView == NULL) {
-		window->m_window->fGLView = glview;
-		window->m_window->Lock();
-		window->m_window->AddChild(glview);
-		glview->LockGL();
-		glview->ResizeTo(size.width(),size.height());
-		window->m_window->Unlock();
-	}
-
-	return true;
-}
-
-void QHaikuGLContext::doneCurrent()
-{
-}
-
-void QHaikuGLContext::swapBuffers(QPlatformSurface *surface)
-{
-	QHaikuWindow *window = static_cast<QHaikuWindow *>(surface);
-	if (window) {
-		glview->UnlockGL();
-		glview->SwapBuffers();
-		glview->LockGL();
-	}
-}
-
-QSurfaceFormat QHaikuGLContext::format() const
-{
-    return d_format;
-}
-
-bool QHaikuGLContext::isSharing() const
-{
-    return false;
-}
-
-bool QHaikuGLContext::isValid() const
-{
-    return true;
-}
-
-#endif
 
 QT_END_NAMESPACE

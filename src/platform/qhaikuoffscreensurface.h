@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
-** Copyright (C) 2015-2020 Gerasim Troeglazov,
+** Copyright (C) 2021-2022 Gerasim Troeglazov,
 ** Contact: 3dEyes@gmail.com
 **
 ** This file is part of the plugins of the Qt Toolkit.
@@ -38,69 +38,31 @@
 **
 ****************************************************************************/
 
-#ifndef QHAIKU_APPLICATION_H
-#define QHAIKU_APPLICATION_H
+#include <qpa/qplatformoffscreensurface.h>
 
-#include "qhaikuintegration.h"
-#include "qhaikusettings.h"
-#include "qhaikuclipboard.h"
+#include <QtGui/QOffscreenSurface>
+#include <QtGui/QSurface>
 
-#include "simplecrypt.h"
+#ifndef QHAIKUOFFSCREENSURFACE_H
+#define QHAIKUOFFSCREENSURFACE_H
 
-#include <QApplication>
-#include <QProcess>
-#include <QSettings>
-#include <QString>
-#include <QStringList>
-#include <QClipboard>
-#include <QEvent>
-#include <QDebug>
+QT_BEGIN_NAMESPACE
 
-#include <private/qguiapplication_p.h>
-
-#include <OS.h>
-#include <Application.h>
-#include <AppFileInfo.h>
-#include <File.h>
-#include <Path.h>
-#include <Entry.h>
-#include <String.h>
-#include <Locale.h>
-#include <LocaleRoster.h>
-#include <Roster.h>
-#include <Clipboard.h>
-#include <Resources.h>
-
-#include <stdio.h>
-
-#define Q_REF_TO_ARGV 	0x01
-#define Q_REF_TO_FORK 	0x02
-#define Q_KILL_ON_EXIT	0x04
-
-class HQApplication : public QObject, public BApplication
+class QHaikuOffscreenSurface : public QPlatformOffscreenSurface
 {
-	Q_OBJECT
 public:
-	HQApplication(const char*signature);
-	~HQApplication();
+    QHaikuOffscreenSurface(QOffscreenSurface *offscreenSurface);
+    ~QHaikuOffscreenSurface();
 
-	virtual void MessageReceived(BMessage *message) override;
-	void	RefsReceived(BMessage *pmsg) override;
-	virtual bool QuitRequested() override;
-	virtual void ReadyToRun() override;
+    QSurfaceFormat format() const override;
+    bool isValid() const override { return m_offscreenBuffer != NULL; }
 
-	QStringList openFiles(void) { return openFileList; }
-	uint32 QtFlags(void) { return qtFlags; }
-	void SetQtFlags(uint32 flags) { qtFlags = flags; }
-	void waitForRun(void);
+	void *openGLBuffer() { return m_offscreenBuffer; }
+
 private:
-	BMessenger  fTrackerMessenger;
-	QHaikuClipboard *fClipboard;
-	QStringList openFileList;
-	sem_id readyForRunSem;
-	uint32 qtFlags;
-Q_SIGNALS:
-	bool applicationQuit();
+	void* m_offscreenBuffer;
 };
 
-#endif
+QT_END_NAMESPACE
+
+#endif // QHAIKUOFFSCREENSURFACE_H

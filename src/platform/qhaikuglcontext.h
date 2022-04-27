@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
-** Copyright (C) 2015-2020 Gerasim Troeglazov,
+** Copyright (C) 2015-2022 Gerasim Troeglazov,
 ** Contact: 3dEyes@gmail.com
 **
 ** This file is part of the plugins of the Qt Toolkit.
@@ -38,69 +38,69 @@
 **
 ****************************************************************************/
 
-#ifndef QHAIKU_APPLICATION_H
-#define QHAIKU_APPLICATION_H
+#ifndef QHAIKUGLCONTEXT_H
+#define QHAIKUGLCONTEXT_H
 
-#include "qhaikuintegration.h"
-#include "qhaikusettings.h"
-#include "qhaikuclipboard.h"
+#include <qpa/qplatformopenglcontext.h>
+#include <QtGui/qopenglcontext.h>
+#include <QtGui/private/qopenglcontext_p.h>
+#include <QtGui/QWindow>
 
-#include "simplecrypt.h"
+#include "qhaikuapplication.h"
+#include "qhaikuwindow.h"
+#include "qhaikubackingstore.h"
+#include "qhaikuoffscreensurface.h"
+#include "qhaikuscreen.h"
 
-#include <QApplication>
-#include <QProcess>
-#include <QSettings>
-#include <QString>
-#include <QStringList>
-#include <QClipboard>
-#include <QEvent>
-#include <QDebug>
+#include "GL/gl.h"
+#include "GL/glu.h"
+#include "GL/osmesa.h"
 
-#include <private/qguiapplication_p.h>
+QT_BEGIN_NAMESPACE
 
-#include <OS.h>
-#include <Application.h>
-#include <AppFileInfo.h>
-#include <File.h>
-#include <Path.h>
-#include <Entry.h>
-#include <String.h>
-#include <Locale.h>
-#include <LocaleRoster.h>
-#include <Roster.h>
-#include <Clipboard.h>
-#include <Resources.h>
-
-#include <stdio.h>
-
-#define Q_REF_TO_ARGV 	0x01
-#define Q_REF_TO_FORK 	0x02
-#define Q_KILL_ON_EXIT	0x04
-
-class HQApplication : public QObject, public BApplication
+struct QHaikuNativeGLContext
 {
-	Q_OBJECT
-public:
-	HQApplication(const char*signature);
-	~HQApplication();
+    QHaikuNativeGLContext()
+        : m_context(0)
+    { }
 
-	virtual void MessageReceived(BMessage *message) override;
-	void	RefsReceived(BMessage *pmsg) override;
-	virtual bool QuitRequested() override;
-	virtual void ReadyToRun() override;
+    QHaikuNativeGLContext(OSMesaContext ctx)
+        : m_context(ctx)
+    { }
 
-	QStringList openFiles(void) { return openFileList; }
-	uint32 QtFlags(void) { return qtFlags; }
-	void SetQtFlags(uint32 flags) { qtFlags = flags; }
-	void waitForRun(void);
+    OSMesaContext context() const { return m_context; }
+
 private:
-	BMessenger  fTrackerMessenger;
-	QHaikuClipboard *fClipboard;
-	QStringList openFileList;
-	sem_id readyForRunSem;
-	uint32 qtFlags;
-Q_SIGNALS:
-	bool applicationQuit();
+    OSMesaContext m_context;
 };
 
-#endif
+
+class QHaikuGLContext : public QPlatformOpenGLContext
+{
+public:
+    QHaikuGLContext(QOpenGLContext *context);
+    ~QHaikuGLContext();
+
+    bool makeCurrent(QPlatformSurface *surface) override;
+    void doneCurrent() override;
+    void swapBuffers(QPlatformSurface *surface) override;
+    QFunctionPointer getProcAddress(const char *procName) override;
+
+    QSurfaceFormat format() const override;
+    bool isSharing() const override;
+    bool isValid() const override;
+
+    OSMesaContext nativeContext() const { return m_mesaContext; }
+
+	OSMesaContext m_mesaContext;
+	OSMesaContext m_shareContext;
+   
+private:
+	QSurfaceFormat d_format;
+};
+
+Q_DECLARE_METATYPE(QHaikuNativeGLContext)
+
+QT_END_NAMESPACE
+
+#endif // QHAIKUGLCONTEXT_H

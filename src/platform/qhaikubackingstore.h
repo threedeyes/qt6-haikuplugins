@@ -38,15 +38,14 @@
 **
 ****************************************************************************/
 
-#ifndef QHAIKUCOMMON_H
-#define QHAIKUCOMMON_H
+#ifndef QHAIKUBACKINGSTORE_H
+#define QHAIKUBACKINGSTORE_H
 
 #include "qhaikucursor.h"
 
 #include <qpa/qplatformbackingstore.h>
 #include <qpa/qplatformdrag.h>
 #include <qpa/qplatformintegration.h>
-#include <qpa/qplatformscreen.h>
 #include <qpa/qplatformwindow.h>
 
 #include <qscopedpointer.h>
@@ -55,47 +54,21 @@
 #include <qpainter.h>
 #include <qhash.h>
 
-#include <Screen.h>
 #include <View.h>
 #include <Bitmap.h>
+#include <Rect.h>
+#include <Region.h>
 
 extern void qt_scrollRectInImage(QImage &img, const QRect &rect, const QPoint &offset);
 
 QT_BEGIN_NAMESPACE
 
-class QHaikuScreen : public QPlatformScreen
-{
-public:
-    QHaikuScreen();
-    ~QHaikuScreen();
-
-    QRect geometry() const override;
-    int depth() const override { return 32; }
-    QImage::Format format() const override { return QImage::Format_RGB32; }
-	QPlatformCursor *cursor() const override;
-	
-    QPixmap grabWindow(WId window, int x, int y, int width, int height) const override;
-
-    QPlatformScreen::SubpixelAntialiasingType subpixelAntialiasingTypeHint() const override;
-
-    QSizeF physicalSize() const override;
-    QDpi logicalDpi() const override;
-    Qt::ScreenOrientation nativeOrientation() const override;
-    Qt::ScreenOrientation orientation() const override;
-
-private:
-    QHaikuCursor *m_cursor;
-    BScreen *m_screen;
-};
-
-//#ifndef QT_NO_DRAGANDDROP
 class QHaikuDrag : public QPlatformDrag
 {
 public:
     QMimeData *platformDropData() { return 0; }
     Qt::DropAction drag(QDrag *) override { return Qt::IgnoreAction; }
 };
-//#endif
 
 class QHaikuBackingStore : public QPlatformBackingStore
 {
@@ -107,10 +80,15 @@ public:
     void flush(QWindow *window, const QRegion &region, const QPoint &offset) override;
     void resize(const QSize &size, const QRegion &staticContents) override;
     bool scroll(const QRegion &area, int dx, int dy) override;
+    void composeAndFlush(QWindow *window, const QRegion &region, const QPoint &offset,
+                                       QPlatformTextureList *textures,
+                                       bool translucentBackground) override;
+	QImage toImage() const override { return m_image; }
 
     QPixmap grabWindow(WId window, const QRect &rect) const;
 
     static QHaikuBackingStore *backingStoreForWinId(WId id);
+    void drawChildWindows(QWindow *topwin);
 
 private:
     void clearHash();
@@ -125,4 +103,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QHAIKUBACKINGSTORE_H

@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
-** Copyright (C) 2015-2017 Gerasim Troeglazov,
+** Copyright (C) 2015-2022 Gerasim Troeglazov,
 ** Contact: 3dEyes@gmail.com
 **
 ** This file is part of the plugins of the Qt Toolkit.
@@ -38,7 +38,6 @@
 **
 ****************************************************************************/
 
-#include "qhaikucommon.h"
 #include "qhaikuwindow.h"
 #include "qhaikucursor.h"
 #include "qhaikuintegration.h"
@@ -162,136 +161,5 @@ Qt::ScreenOrientation QHaikuScreen::orientation() const
 {
     return Qt::PrimaryOrientation;
 }
-
-QHaikuBackingStore::QHaikuBackingStore(QWindow *window)
-    : QPlatformBackingStore(window)
-{
-	BRect rect(0, 0, window->width() - 1, window->height() - 1);
-	m_bitmap = new BBitmap(rect, B_RGB32);	
-	m_image = QImage((uchar*)m_bitmap->Bits(), window->width(), window->height(), m_bitmap->BytesPerRow(), QImage::Format_RGB32);
-}
-
-
-QHaikuBackingStore::~QHaikuBackingStore()
-{
-	m_image = QImage();
-	delete m_bitmap;
-	
-    clearHash();
-}
-
-
-QPaintDevice *QHaikuBackingStore::paintDevice()
-{
-    return &m_image;
-}
-
-
-void QHaikuBackingStore::flush(QWindow *window, const QRegion &region, const QPoint &offset)
-{
-    if (m_image.size().isEmpty())
-        return;
-
-    QSize imageSize = m_image.size();
-
-    QRegion clipped = QRect(0, 0, window->width(), window->height());
-    clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);
-
-    QRect bounds = clipped.boundingRect().translated(offset);
-
-    if (bounds.isNull())
-        return;
-
-    WId id = window->winId();
-	QHaikuSurfaceView *view = QHaikuWindow::viewForWinId(id);
-
-    QRect outline = region.boundingRect();
-
-	if(view->LockLooper()) {
-		view->SetDrawingMode(B_OP_COPY);
-
-		BRect rect(outline.left(), outline.top(), outline.right(), outline.bottom());
-		view->DrawBitmapAsync(m_bitmap, rect, rect);
-
-		view->Sync();
-    	view->UnlockLooper();
-    }
-    m_windowAreaHash[id] = bounds;
-    m_backingStoreForWinIdHash[id] = this;
-}
-
-
-void QHaikuBackingStore::resize(const QSize &size, const QRegion &)
-{
-    WId id = window()->winId();
-    if (m_image.size() != size) {
-		QHaikuSurfaceView *view = QHaikuWindow::viewForWinId(id);
-    	if(view->LockLooper()) {
-    		m_image = QImage();
-	        delete m_bitmap;
-
-			BRect rect(0, 0, size.width() - 1, size.height() - 1);
-			m_bitmap = new BBitmap(rect, B_RGB32, true);
-			m_image = QImage((uchar*)m_bitmap->Bits(), size.width(), size.height(), m_bitmap->BytesPerRow(), QImage::Format_RGB32);
-			view->UnlockLooper();
-    	}
-    }
-    clearHash();
-}
-
-
-bool QHaikuBackingStore::scroll(const QRegion &area, int dx, int dy)
-{
-	if (m_image.isNull())
-		return false;
-
-	for (const QRect &rect : area)
-		qt_scrollRectInImage(m_image, rect, QPoint(dx, dy));
-
-	return true;
-}
-
-
-QPixmap QHaikuBackingStore::grabWindow(WId window, const QRect &rect) const
-{
-    QRect area = m_windowAreaHash.value(window, QRect());
-    if (area.isNull())
-        return QPixmap();
-
-    QRect adjusted = rect;
-    if (adjusted.width() <= 0)
-        adjusted.setWidth(area.width());
-    if (adjusted.height() <= 0)
-        adjusted.setHeight(area.height());
-
-    adjusted = adjusted.translated(area.topLeft()) & area;
-
-    if (adjusted.isEmpty())
-        return QPixmap();
-
-    return QPixmap::fromImage(m_image.copy(adjusted));
-}
-
-
-QHaikuBackingStore *QHaikuBackingStore::backingStoreForWinId(WId id)
-{
-    return m_backingStoreForWinIdHash.value(id, 0);
-}
-
-
-void QHaikuBackingStore::clearHash()
-{
-    QList<WId> ids = m_windowAreaHash.keys();
-    foreach (WId id, ids) {
-        QHash<WId, QHaikuBackingStore *>::iterator it = m_backingStoreForWinIdHash.find(id);
-        if (it.value() == this)
-            m_backingStoreForWinIdHash.remove(id);
-    }
-    m_windowAreaHash.clear();
-}
-
-
-QHash<WId, QHaikuBackingStore *> QHaikuBackingStore::m_backingStoreForWinIdHash;
-
 
 QT_END_NAMESPACE
