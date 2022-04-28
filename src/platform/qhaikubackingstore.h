@@ -85,9 +85,6 @@ public:
                                        bool translucentBackground) override;
 	QImage toImage() const override { return m_image; }
 
-    QPixmap grabWindow(WId window, const QRect &rect) const;
-
-    static QHaikuBackingStore *backingStoreForWinId(WId id);
     void drawChildWindows(QWindow *topwin);
 
 private:
@@ -97,8 +94,6 @@ private:
     BBitmap *m_bitmap;
     
     QHash<WId, QRect> m_windowAreaHash;
-
-    static QHash<WId, QHaikuBackingStore *> m_backingStoreForWinIdHash;
 };
 
 QT_END_NAMESPACE

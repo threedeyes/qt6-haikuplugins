@@ -66,8 +66,6 @@ QHaikuBackingStore::~QHaikuBackingStore()
 {
 	m_image = QImage();
 	delete m_bitmap;
-	
-    clearHash();
 }
 
 
@@ -129,7 +127,6 @@ void QHaikuBackingStore::flush(QWindow *window, const QRegion &region, const QPo
     	view->UnlockLooper();
     }
     m_windowAreaHash[id] = bounds;
-    m_backingStoreForWinIdHash[id] = this;
 }
 
 
@@ -156,7 +153,6 @@ void QHaikuBackingStore::resize(const QSize &size, const QRegion &)
 			view->UnlockLooper();
     	}
     }
-    clearHash();
 }
 
 
@@ -170,47 +166,5 @@ bool QHaikuBackingStore::scroll(const QRegion &area, int dx, int dy)
 
 	return true;
 }
-
-
-QPixmap QHaikuBackingStore::grabWindow(WId window, const QRect &rect) const
-{
-    QRect area = m_windowAreaHash.value(window, QRect());
-    if (area.isNull())
-        return QPixmap();
-
-    QRect adjusted = rect;
-    if (adjusted.width() <= 0)
-        adjusted.setWidth(area.width());
-    if (adjusted.height() <= 0)
-        adjusted.setHeight(area.height());
-
-    adjusted = adjusted.translated(area.topLeft()) & area;
-
-    if (adjusted.isEmpty())
-        return QPixmap();
-
-    return QPixmap::fromImage(m_image.copy(adjusted));
-}
-
-
-QHaikuBackingStore *QHaikuBackingStore::backingStoreForWinId(WId id)
-{
-    return m_backingStoreForWinIdHash.value(id, 0);
-}
-
-
-void QHaikuBackingStore::clearHash()
-{
-    for (auto it = m_windowAreaHash.cbegin(), end = m_windowAreaHash.cend(); it != end; ++it) {
-        const auto it2 = qAsConst(m_backingStoreForWinIdHash).find(it.key());
-        if (it2.value() == this)
-            m_backingStoreForWinIdHash.erase(it2);
-    }
-    m_windowAreaHash.clear();
-}
-
-
-QHash<WId, QHaikuBackingStore *> QHaikuBackingStore::m_backingStoreForWinIdHash;
-
 
 QT_END_NAMESPACE

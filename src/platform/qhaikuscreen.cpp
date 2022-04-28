@@ -104,12 +104,7 @@ QPixmap QHaikuScreen::grabWindow(WId id, int x, int y, int width, int height) co
     		delete bitmap;
     		return QPixmap::fromImage(image);
     	}
-		return QPixmap();
     }
-
-    QHaikuBackingStore *store = QHaikuBackingStore::backingStoreForWinId(id);
-    if (store)
-        return store->grabWindow(id, rect);
 
     return QPixmap();
 }
