@@ -70,6 +70,10 @@ QHaikuGLContext::QHaikuGLContext(QOpenGLContext *context)
 
 	const int requestedVersion = (d_format.majorVersion() << 8) + d_format.minorVersion();
 	int mesaProfile = OSMESA_COMPAT_PROFILE;
+	if (requestedVersion <= 0x0200) {
+		d_format.setMajorVersion(2);
+		d_format.setMinorVersion(1);
+	}
 	if (requestedVersion >= 0x0302) {
 		switch (d_format.profile()) {
 		case QSurfaceFormat::NoProfile:
@@ -110,6 +114,8 @@ QHaikuGLContext::QHaikuGLContext(QOpenGLContext *context)
 		qCWarning(lcQpaOpenGLContext, "Failed to create OSMesaContext");
 		return;
 	}
+
+	context->setFormat(d_format);
 
 	qCWarning(lcQpaOpenGLContext).verbosity(3) << "Created" << this << "based on requested" << context->format();
 }

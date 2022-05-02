@@ -256,7 +256,7 @@ QHaikuIntegration *QHaikuIntegration::createHaikuIntegration(const QStringList& 
 	settings.endGroup();
 
 	// Override OpenGL/GLSL versions
-	setenv("MESA_GL_VERSION_OVERRIDE","2.1", 0);
+	setenv("MESA_GL_VERSION_OVERRIDE","4.6", 0);
 	setenv("MESA_GLSL_VERSION_OVERRIDE","460", 0);
 
     QHaikuIntegration *newHaikuIntegration = new QHaikuIntegration(parameters, argc, argv);
