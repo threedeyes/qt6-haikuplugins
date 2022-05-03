@@ -282,6 +282,12 @@ void QtHaikuWindow::WindowActivated(bool active)
 }
 
 
+void QtHaikuWindow::WorkspaceActivated(int32 workspace, bool active)
+{
+	Q_EMIT workspaceActivated(workspace, active);
+}
+
+
 bool QtHaikuWindow::QuitRequested()
 {
 	Q_EMIT quitRequested();
@@ -323,6 +329,7 @@ QHaikuWindow::QHaikuWindow(QWindow *wnd)
     connect(m_window, SIGNAL(windowMoved(QPoint)), SLOT(platformWindowMoved(QPoint)));
 	connect(m_window, SIGNAL(windowResized(QSize)), SLOT(platformWindowResized(QSize)));
     connect(m_window, SIGNAL(windowActivated(bool)), SLOT(platformWindowActivated(bool)));
+    connect(m_window, SIGNAL(workspaceActivated(int, bool)), SLOT(platformWorkspaceActivated(int, bool)));
     connect(m_window, SIGNAL(windowZoomed()), SLOT(platformWindowZoomed()));
     connect(m_window, SIGNAL(windowMinimized(bool)), SLOT(platformWindowMinimized(bool)));
     connect(m_window, SIGNAL(dropAction(BMessage*)), SLOT(platformDropAction(BMessage*)));
@@ -1001,6 +1008,12 @@ void QHaikuWindow::platformWindowActivated(bool activated)
 	QWindowSystemInterface::handleWindowActivated(window(), Qt::ActiveWindowFocusReason);
 }
 
+
+void QHaikuWindow::platformWorkspaceActivated(int workspace, bool activated)
+{
+	if (activated)
+		QWindowSystemInterface::handleExposeEvent(window(), window()->geometry());
+}
 
 void QHaikuWindow::platformWindowZoomed()
 {

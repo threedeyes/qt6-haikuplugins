@@ -86,6 +86,7 @@ public:
 	void MessageReceived(BMessage* msg) override;
 	virtual void DispatchMessage(BMessage *, BHandler *) override;
 	virtual void WindowActivated(bool active) override;
+	virtual void WorkspaceActivated(int32 workspace, bool active) override;
 	virtual bool QuitRequested() override;
 
 	virtual void Zoom(BPoint origin, float w, float h) override;
@@ -99,6 +100,7 @@ Q_SIGNALS:
     void windowMoved(const QPoint &pos);
     void windowResized(const QSize &size);
     void windowActivated(bool activated);
+    void workspaceActivated(int workspace, bool activated);
     void windowZoomed();
     void windowMinimized(bool minimized);
     void quitRequested();
@@ -194,6 +196,7 @@ private Q_SLOTS:
 	void platformWindowMoved(const QPoint &pos);
 	void platformWindowResized(const QSize &size);
 	void platformWindowActivated(bool activated);
+	void platformWorkspaceActivated(int workspace, bool activated);
 	void platformWindowZoomed();
 	void platformWindowMinimized(bool minimized);
 	void platformDropAction(BMessage *message);
