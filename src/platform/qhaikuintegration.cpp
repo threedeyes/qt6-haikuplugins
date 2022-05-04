@@ -95,7 +95,16 @@ QHaikuIntegration::~QHaikuIntegration()
 
 bool QHaikuIntegration::isOpenGLEnabled()
 {
+	app_info appInfo;
+	if (be_app->GetAppInfo(&appInfo) == B_OK) {
+		QStringList disabledListApps;
+		disabledListApps
+			<< "application/x-vnd.telegram" 		//performance issues
+			<< "application/x-vnd.kotatogram";		//performance issues
+		return !disabledListApps.contains(appInfo.signature, Qt::CaseInsensitive);
+	}
 	return true;
+
 }
 
 QHaikuIntegration *QHaikuIntegration::createHaikuIntegration(const QStringList& parameters, int &argc, char **argv)
