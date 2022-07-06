@@ -82,9 +82,9 @@ QFontEngineHaikuFT *QFontEngineHaikuFT::create(const QFontDef &fontDef, FaceId f
 	if (hinting == 0)
 		engine->setDefaultHintStyle(QFontEngineHaikuFT::HintNone);
 	else if (hinting == 1)
-		engine->setDefaultHintStyle(QFontEngineHaikuFT::HintFull);
+		engine->setDefaultHintStyle(QFontEngineHaikuFT::HintLight);
 	else if (hinting == 2 && fontDef.families.contains("Mono"))
-		engine->setDefaultHintStyle(QFontEngineHaikuFT::HintFull);
+		engine->setDefaultHintStyle(QFontEngineHaikuFT::HintLight);
 
 	engine->default_load_flags = subpixel ? FT_LOAD_TARGET_LCD	: FT_LOAD_TARGET_NORMAL;
 
