@@ -80,9 +80,6 @@ public:
     void flush(QWindow *window, const QRegion &region, const QPoint &offset) override;
     void resize(const QSize &size, const QRegion &staticContents) override;
     bool scroll(const QRegion &area, int dx, int dy) override;
-    void composeAndFlush(QWindow *window, const QRegion &region, const QPoint &offset,
-                                       QPlatformTextureList *textures,
-                                       bool translucentBackground) override;
 	QImage toImage() const override { return m_image; }
 
     void drawChildWindows(QWindow *topwin);

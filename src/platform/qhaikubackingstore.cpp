@@ -130,14 +130,6 @@ void QHaikuBackingStore::flush(QWindow *window, const QRegion &region, const QPo
 }
 
 
-void QHaikuBackingStore::composeAndFlush(QWindow *window, const QRegion &region, const QPoint &offset,
-                                       QPlatformTextureList *textures,
-                                       bool translucentBackground)
-{
-    QPlatformBackingStore::composeAndFlush(window, region, offset, textures, translucentBackground);
-}
-
-
 void QHaikuBackingStore::resize(const QSize &size, const QRegion &)
 {
     WId id = window()->winId();
