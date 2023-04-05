@@ -1,5 +1,6 @@
 TARGET  = qhvif
 PLUGIN_TYPE = imageformats
+TEMPLATE = lib
 load(qt_plugin)
 
 QT += core gui core-private

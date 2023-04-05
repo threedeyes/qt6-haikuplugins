@@ -1,11 +1,14 @@
 TARGET  = qhaiku
 PLUGIN_TYPE = platforms
 PLUGIN_CLASS_NAME = QHaikuExpIntegrationPlugin
+TEMPLATE = lib
 load(qt_plugin)
 
 QT += widgets-private core-private gui-private
 
 LIBS += -lbe -lroot -ltracker -lgame -lOSMesa -lGL -lGLU
+
+CONFIG += plugin
 
 CONFIG += link_pkgconfig
 PKGCONFIG += freetype2
