@@ -91,18 +91,18 @@ bool QHaikuPlatformMessageDialogHelper::show(Qt::WindowFlags, Qt::WindowModality
     const QString text = informativeText.isEmpty() ? options->text() : (options->text() + QLatin1Char('\n') + informativeText);
     
     alert_type type = B_EMPTY_ALERT;
-    switch (options->icon()) {
-    	case QMessageBox::NoIcon:
-    	case QMessageBox::Information:
-		case QMessageBox::Question:
-    		type = B_INFO_ALERT;
-    		break;
-		case QMessageBox::Warning:
-			type = B_WARNING_ALERT;
-			break;
-		case QMessageBox::Critical:
-			type = B_STOP_ALERT;
-			break;
+    switch (options->standardIcon()) {
+        case QMessageDialogOptions::NoIcon:
+        case QMessageDialogOptions::Information:
+        case QMessageDialogOptions::Question:
+            type = B_INFO_ALERT;
+            break;
+        case QMessageDialogOptions::Warning:
+            type = B_WARNING_ALERT;
+            break;
+        case QMessageDialogOptions::Critical:
+            type = B_STOP_ALERT;
+            break;
     }
 
 	QTextDocument doc;
