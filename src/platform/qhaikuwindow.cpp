@@ -92,12 +92,12 @@ static uint32 translateKeyCode(uint32 key)
 }
 
 
-static bool activeWindowChangeQueued(const QWindow *window)
+static bool focusWindowChangeQueued(const QWindow *window)
 {
-    QWindowSystemInterfacePrivate::ActivatedWindowEvent *systemEvent =
-        static_cast<QWindowSystemInterfacePrivate::ActivatedWindowEvent *>
-        (QWindowSystemInterfacePrivate::peekWindowSystemEvent(QWindowSystemInterfacePrivate::ActivatedWindow));
-    return systemEvent && systemEvent->activated != window;
+    QWindowSystemInterfacePrivate::FocusWindowEvent *systemEvent =
+        static_cast<QWindowSystemInterfacePrivate::FocusWindowEvent *>
+        (QWindowSystemInterfacePrivate::peekWindowSystemEvent(QWindowSystemInterfacePrivate::FocusWindow));
+    return systemEvent && systemEvent->focused != window;
 }
 
 
@@ -641,7 +641,7 @@ void QHaikuWindow::setVisible(bool visible)
 			m_window->CenterOnScreen();
 
 		if (window()->type() != Qt::ToolTip)
-			QWindowSystemInterface::handleWindowActivated(window());
+			QWindowSystemInterface::handleFocusWindowChanged(window());
 
 		if (m_pendingGeometryChangeOnShow) {
 			m_pendingGeometryChangeOnShow = false;
@@ -998,14 +998,14 @@ void QHaikuWindow::platformWindowActivated(bool activated)
 				QApplication::activePopupWidget()->close();
 	    }
 		if (window() == QGuiApplication::focusWindow()
-            && !activeWindowChangeQueued(window())) {
-            QWindowSystemInterface::handleWindowActivated(0);
+            && !focusWindowChangeQueued(window())) {
+            QWindowSystemInterface::handleFocusWindowChanged(0);
 		}
 		QWindowSystemInterface::handleApplicationStateChanged(Qt::ApplicationInactive);
 		return;
 	}
 	QWindowSystemInterface::handleApplicationStateChanged(Qt::ApplicationActive);
-	QWindowSystemInterface::handleWindowActivated(window(), Qt::ActiveWindowFocusReason);
+	QWindowSystemInterface::handleFocusWindowChanged(window(), Qt::ActiveWindowFocusReason);
 }
 
 
