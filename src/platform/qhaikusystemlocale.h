@@ -53,7 +53,7 @@ class QHaikuSystemLocale : public QSystemLocale
 public:
     QHaikuSystemLocale();
 
-    QVariant query(QueryType type, QVariant in) const override;
+    QVariant query(QueryType type, QVariant &&in) const override;
     QLocale fallbackLocale() const override;
 
 private:

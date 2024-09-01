@@ -72,7 +72,7 @@ void QHaikuSystemLocale::getLocaleFromHaiku() const
 	m_uilanguages.replaceInStrings("_","-");
 }
 
-QVariant QHaikuSystemLocale::query(QueryType type, QVariant in) const
+QVariant QHaikuSystemLocale::query(QueryType type, QVariant &&in) const
 {
     if (type == LocaleChanged) {
         getLocaleFromHaiku();
