@@ -486,6 +486,9 @@ void QHaikuWindow::setWindowFlags(Qt::WindowFlags flags)
 
 void QHaikuWindow::setParent(const QPlatformWindow *win)
 {
+	if (win == NULL)
+		return;
+
 	if (m_parent != (QHaikuWindow*)win) {
 		m_parent = (QHaikuWindow*)win;
 		m_topLevel = (QHaikuWindow*)win;
