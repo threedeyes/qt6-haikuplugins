@@ -6,7 +6,7 @@ load(qt_plugin)
 
 QT += widgets-private core-private gui-private
 
-LIBS += -lbe -lroot -ltracker -lgame -lOSMesa -lGL -lGLU
+LIBS += -lbe -lroot -ltracker -lgame -lGL -lGLU
 
 CONFIG += plugin
 
